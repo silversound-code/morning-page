@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌅 Morning Page</title>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" href="css/calendar.css">
+    <link rel="stylesheet" href="css/dark-mode.css">
+</head>
+<body>
+    <!-- 다크모드 토글 -->
+    <div class="theme-toggle" onclick="toggleDarkMode()">
+        <span id="themeIcon">🌙</span>
+    </div>
+
+    <!-- 로그인 화면 -->
+    <div id="authScreen" class="auth-container">
+        <h1>🌅 Morning Page</h1>
+        
+        <!-- 로그인 폼 -->
+        <div id="loginForm">
+            <form id="loginFormElement">
+                <div class="form-group">
+                    <label>사용자명</label>
+                    <input type="text" id="loginUsername" required>
+                </div>
+                <div class="form-group">
+                    <label>비밀번호</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+                <button type="submit" style="width: 100%;">로그인</button>
+            </form>
+            <div class="auth-switch">
+                계정이 없으신가요? <a href="#" onclick="showRegister(); return false;">회원가입</a>
+            </div>
+        </div>
+        
+        <!-- 회원가입 폼 -->
+        <div id="registerForm" class="hidden">
+            <form id="registerFormElement">
+                <div class="form-group">
+                    <label>사용자명</label>
+                    <input type="text" id="registerUsername" required>
+                </div>
+                <div class="form-group">
+                    <label>이메일</label>
+                    <input type="email" id="registerEmail" required>
+                </div>
+                <div class="form-group">
+                    <label>비밀번호</label>
+                    <input type="password" id="registerPassword" required>
+                </div>
+                <button type="submit" style="width: 100%;">회원가입</button>
+            </form>
+            <div class="auth-switch">
+                이미 계정이 있으신가요? <a href="#" onclick="showLogin(); return false;">로그인</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 메인 화면 -->
+    <div id="mainScreen" class="container hidden">
+        <!-- 헤더 -->
+        <div class="header">
+            <h1>🌅 Morning Page</h1>
+            <div class="user-info">
+                <div>
+                    <span id="welcomeMessage">안녕하세요!</span>
+                    <button class="btn-secondary btn-small" onclick="logout()" style="margin-left: 10px;">로그아웃</button>
+                </div>
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-label">연속 기록</div>
+                        <div class="stat-value" id="currentStreak">0일 🔥</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">총 기록</div>
+                        <div class="stat-value" id="totalRecords">0개</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 메인 콘텐츠 -->
+        <div class="main-content">
+            <!-- 왼쪽: 기록 작성 + 달력 -->
+            <div>
+                <!-- 기록 작성 -->
+                <div class="card">
+                    <h2>오늘의 기록 ✍️</h2>
+                    <form id="recordForm">
+                        <div class="form-group">
+                            <label>날짜</label>
+                            <input type="date" id="recordDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label>카테고리</label>
+                            <select id="categoryId" required>
+                                <option value="">선택하세요</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>활동</label>
+                            <input type="text" id="activity" placeholder="무엇을 했나요?" required>
+                        </div>
+                        <div class="form-group">
+                            <label>소요 시간 (분)</label>
+                            <input type="number" id="duration" placeholder="30" min="1">
+                        </div>
+                        <div class="form-group">
+                            <label>내용</label>
+                            <textarea id="content" placeholder="오늘의 기록을 남겨보세요"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="isPublic"> 공개하기
+                            </label>
+                        </div>
+                        <button type="submit">기록하기 ✨</button>
+                    </form>
+                </div>
+                
+                <!-- 달력 -->
+                <div class="card calendar-container">
+                    <div class="calendar-header">
+                        <h3 id="calendarTitle">2026년 2월</h3>
+                        <div class="calendar-nav">
+                            <button class="btn-icon" onclick="previousMonth()">◀</button>
+                            <button class="btn-icon" onclick="nextMonth()">▶</button>
+                        </div>
+                    </div>
+                    
+                    <div class="month-stats">
+                        <h3>이번 달 통계</h3>
+                        <div class="stats-grid">
+                            <div class="stat-box">
+                                <div class="stat-box-label">기록한 날</div>
+                                <div class="stat-box-value" id="monthRecordDays">0일</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-box-label">가장 많이 한 활동</div>
+                                <div class="stat-box-value" id="topCategory" style="font-size: 16px;">-</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="calendar-grid" id="calendar"></div>
+                </div>
+            </div>
+            
+            <!-- 오른쪽: 기록 목록 -->
+            <div class="card">
+                <div style="margin-bottom: 15px;">
+                    <h2>나의 기록 📚</h2>
+                    <input type="text" id="searchInput" placeholder="활동이나 내용으로 검색..." 
+                    oninput="searchRecords()" style="margin-top: 10px; padding: 10px;">
+                </div>
+                <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                    <select id="categoryFilter" onchange="filterRecords()" style="flex: 1;">
+                        <option value="">전체 카테고리</option>
+                    </select>
+                    <button onclick="resetFilters()" class="btn-secondary btn-small">초기화</button>
+                </div>
+                <div id="recordList" class="record-list">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        기록을 불러오는 중...
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 공개 피드 -->
+        <div class="card" style="margin-top: 20px;">
+            <h2>모두의 모닝페이지 🌍</h2>
+            <p style="color: #666; font-size: 14px; margin-bottom: 20px;">
+                다른 사람들은 어떤 아침을 보내고 있을까요?
+            </p>
+            <div id="publicFeed" class="record-list" style="max-height: 400px;">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    공개 기록을 불러오는 중...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 수정 모달 -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>기록 수정</h2>
+                <button class="close-btn" onclick="closeEditModal()">✕</button>
+            </div>
+            <form id="editForm">
+                <input type="hidden" id="editRecordId">
+                <div class="form-group">
+                    <label>날짜</label>
+                    <input type="date" id="editRecordDate" readonly style="background: #f0f0f0;">
+                </div>
+                <div class="form-group">
+                    <label>카테고리</label>
+                    <select id="editCategoryId" required>
+                        <option value="">선택하세요</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>활동</label>
+                    <input type="text" id="editActivity" required>
+                </div>
+                <div class="form-group">
+                    <label>소요 시간 (분)</label>
+                    <input type="number" id="editDuration" min="1">
+                </div>
+                <div class="form-group">
+                    <label>내용</label>
+                    <textarea id="editContent"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="editIsPublic"> 공개하기
+                    </label>
+                </div>
+                <button type="submit">수정 완료</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- 토스트 알림 -->
+    <div id="toast" class="toast"></div>
+
+    <!-- JavaScript -->
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/records.js"></script>
+    <script src="js/calendar.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

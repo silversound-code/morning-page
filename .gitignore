@@ -35,3 +35,8 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### 민감 정보 (비밀번호 포함)
+**/application-local.properties
+**/application-prod.properties
+**/application-secret.properties

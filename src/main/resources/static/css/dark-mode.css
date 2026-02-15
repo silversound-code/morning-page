@@ -1,0 +1,77 @@
+/* 다크모드 */
+body.dark-mode {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+}
+
+body.dark-mode .card,
+body.dark-mode .header,
+body.dark-mode .auth-container,
+body.dark-mode .modal-content {
+    background: #1f1f1f;
+    color: #e0e0e0;
+}
+
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode .record-activity,
+body.dark-mode .category-name,
+body.dark-mode .calendar-day-number {
+    color: #e0e0e0;
+}
+
+body.dark-mode input,
+body.dark-mode textarea,
+body.dark-mode select {
+    background: #2a2a2a;
+    border-color: #444;
+    color: #e0e0e0;
+}
+
+body.dark-mode .record-item {
+    border-color: #333;
+}
+
+body.dark-mode .record-item:hover {
+    border-color: #667eea;
+}
+
+body.dark-mode .stat-item,
+body.dark-mode .month-stats {
+    background: #2a2a2a;
+}
+
+body.dark-mode .stat-box {
+    background: #1f1f1f;
+}
+
+body.dark-mode .calendar-day {
+    border-color: #333;
+}
+
+/* 다크모드 토글 버튼 */
+.theme-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: white;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 24px;
+    z-index: 100;
+    transition: all 0.3s;
+}
+
+.theme-toggle:hover {
+    transform: scale(1.1);
+}
+
+body.dark-mode .theme-toggle {
+    background: #2a2a2a;
+}
