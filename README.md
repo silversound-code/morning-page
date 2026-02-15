@@ -98,3 +98,49 @@ morningpage/
 ## 📄 라이센스
 
 This project is licensed under the MIT License.
+
+## 🚀 로컬 실행 방법
+
+### 1. 저장소 클론
+```bash
+git clone https://github.com/your-username/morning-page.git
+cd morning-page
+```
+
+### 2. MySQL 설정
+```sql
+-- MySQL 접속
+mysql -u root -p
+
+-- 사용자 생성
+CREATE USER 'morningpage'@'localhost' IDENTIFIED BY 'your_password';
+GRANT ALL PRIVILEGES ON morningpage_db.* TO 'morningpage'@'localhost';
+FLUSH PRIVILEGES;
+
+-- DB 생성
+CREATE DATABASE morningpage_db;
+exit;
+```
+
+### 3. 환경 설정 파일 생성
+```bash
+cd src/main/resources
+cp application-local.properties.example application-local.properties
+```
+
+### 4. 비밀번호 설정
+`application-local.properties` 파일 열어서:
+```properties
+spring.datasource.username=morningpage
+spring.datasource.password=your_password  # 여기에 MySQL 비밀번호 입력
+```
+
+### 5. 실행
+```bash
+./gradlew bootRun
+```
+
+### 6. 접속
+```
+http://localhost:8080
+```
