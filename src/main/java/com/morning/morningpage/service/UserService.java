@@ -21,7 +21,15 @@ public class UserService {
     private final MorningPageRepository morningPageRepository;
     private final PasswordEncoder passwordEncoder;  // ⭐ 추가!
     
-    // 회원가입 - 비밀번호 암호화 적용
+    /**
+ * 회원가입
+ * 
+ * @param username 사용자명
+ * @param email 이메일
+ * @param password 평문 비밀번호
+ * @return 생성된 사용자 엔티티
+ * @throws RuntimeException 중복된 사용자명/이메일
+ */
     @Transactional
     public User register(String username, String email, String password) {
         // 중복 체크
@@ -35,7 +43,8 @@ public class UserService {
         User user = User.builder()
                 .username(username)
                 .email(email)
-                .password(passwordEncoder.encode(password))  // ⭐ 암호화!
+                .password(passwordEncoder.encode(password))  // 비밀번호 암호화
+                // 평문 "1234" → "$2a$10$xM8V..."
                 .currentStreak(0)
                 .totalRecords(0)
                 .build();
@@ -43,12 +52,21 @@ public class UserService {
         return userRepository.save(user);
     }
     
-    // 로그인 - 암호화된 비밀번호 비교
+    /**
+ * 로그인
+ * 
+ * @param username 사용자명
+ * @param password 평문 비밀번호
+ * @return 사용자 엔티티
+ * @throws RuntimeException 사용자 없음 또는 비밀번호 불일치
+ */
     public User login(String username, String password) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
         
-        // ⭐ 암호화된 비밀번호와 평문 비교
+        // 비밀번호 검증
+    // passwordEncoder.matches(평문, 암호화된값)
+    // 내부적으로 Salt를 추출하여 비교
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new RuntimeException("비밀번호가 일치하지 않습니다.");
         }
