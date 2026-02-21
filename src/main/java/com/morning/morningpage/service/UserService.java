@@ -5,6 +5,7 @@ import com.morning.morningpage.entity.User;
 import com.morning.morningpage.repository.MorningPageRepository;
 import com.morning.morningpage.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;  // ⭐ 추가!
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,8 +19,9 @@ public class UserService {
     
     private final UserRepository userRepository;
     private final MorningPageRepository morningPageRepository;
+    private final PasswordEncoder passwordEncoder;  // ⭐ 추가!
     
-    // 회원가입
+    // 회원가입 - 비밀번호 암호화 적용
     @Transactional
     public User register(String username, String email, String password) {
         // 중복 체크
@@ -33,7 +35,7 @@ public class UserService {
         User user = User.builder()
                 .username(username)
                 .email(email)
-                .password(password)  // TODO: 나중에 암호화 필요
+                .password(passwordEncoder.encode(password))  // ⭐ 암호화!
                 .currentStreak(0)
                 .totalRecords(0)
                 .build();
@@ -41,12 +43,13 @@ public class UserService {
         return userRepository.save(user);
     }
     
-    // 로그인
+    // 로그인 - 암호화된 비밀번호 비교
     public User login(String username, String password) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
         
-        if (!user.getPassword().equals(password)) {  // TODO: 나중에 암호화 필요
+        // ⭐ 암호화된 비밀번호와 평문 비교
+        if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new RuntimeException("비밀번호가 일치하지 않습니다.");
         }
         
