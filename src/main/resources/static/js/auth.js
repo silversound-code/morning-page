@@ -2,17 +2,24 @@
 async function checkAuth() {
     try {
         const response = await apiRequest('/users/me');
-        
+
         if (response.ok) {
             currentUser = await response.json();
             showMainScreen();
         } else {
+            // 세션 만료
             showAuthScreen();
+            if (response.status === 401) {
+                showToast('세션이 만료되었습니다. 다시 로그인해주세요.', 'error');
+            }
         }
     } catch (error) {
         showAuthScreen();
     }
 }
+
+// 30분마다 세션 체크
+setInterval(checkAuth, 30 * 60 * 1000);
 
 // 로그인
 async function login() {

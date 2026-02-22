@@ -7,9 +7,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -22,20 +25,27 @@ public class MorningPageController {
     
     // 기록 작성
     @PostMapping
-    public ResponseEntity<MorningPageResponse> createRecord(
-            @RequestBody MorningPageRequest request,
+    public ResponseEntity<?> createRecord(
+            @Valid @RequestBody MorningPageRequest request,
+            BindingResult bindingResult,
             HttpSession session) {
-        
+
         Long userId = (Long) session.getAttribute("userId");
         if (userId == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("로그인이 필요합니다.");
         }
-        
+
+        if (bindingResult.hasErrors()) {
+            String errorMessage = bindingResult.getAllErrors().get(0).getDefaultMessage();
+            return ResponseEntity.badRequest().body(errorMessage);
+        }
+
         try {
             MorningPageResponse response = morningPageService.createRecord(userId, request);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
     
@@ -115,21 +125,28 @@ public class MorningPageController {
     
     // 기록 수정
     @PutMapping("/{id}")
-    public ResponseEntity<MorningPageResponse> updateRecord(
+    public ResponseEntity<?> updateRecord(
             @PathVariable Long id,
-            @RequestBody MorningPageRequest request,
+            @Valid @RequestBody MorningPageRequest request,
+            BindingResult bindingResult,
             HttpSession session) {
-        
+
         Long userId = (Long) session.getAttribute("userId");
         if (userId == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("로그인이 필요합니다.");
         }
-        
+
+        if (bindingResult.hasErrors()) {
+            String errorMessage = bindingResult.getAllErrors().get(0).getDefaultMessage();
+            return ResponseEntity.badRequest().body(errorMessage);
+        }
+
         try {
             MorningPageResponse response = morningPageService.updateRecord(userId, id, request);
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
         }
     }
     

@@ -8,7 +8,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "morning_pages")
+@Table(name = "morning_pages", indexes = {
+    @Index(name = "idx_user_date", columnList = "user_id, record_date"),
+    @Index(name = "idx_record_date", columnList = "record_date"),
+    @Index(name = "idx_is_public", columnList = "is_public")
+})
 @Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor

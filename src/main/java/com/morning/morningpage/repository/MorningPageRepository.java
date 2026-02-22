@@ -11,24 +11,44 @@ import java.util.List;
 import java.util.Optional;
 
 public interface MorningPageRepository extends JpaRepository<MorningPage, Long> {
-    
-    // 특정 사용자의 모든 기록
-    List<MorningPage> findByUserOrderByRecordDateDesc(User user);
-    
-    // 특정 날짜의 기록
-    Optional<MorningPage> findByUserAndRecordDate(User user, LocalDate date);
-    
-    // 특정 기간의 기록
-    List<MorningPage> findByUserAndRecordDateBetween(User user, LocalDate startDate, LocalDate endDate);
-    
-    // 카테고리별 기록
-    List<MorningPage> findByUserAndCategory_Id(User user, Long categoryId);
-    
-    // 공개된 최신 기록들
+
+    // FETCH JOIN으로 N+1 해결
+    @Query("SELECT m FROM MorningPage m " +
+    "JOIN FETCH m.user " +
+    "JOIN FETCH m.category " +
+    "WHERE m.user = :user " +
+    "ORDER BY m.recordDate DESC")
+    List<MorningPage> findByUserOrderByRecordDateDesc(@Param("user") User user);
+
+    @Query("SELECT m FROM MorningPage m " +
+    "JOIN FETCH m.user " +
+    "JOIN FETCH m.category " +
+    "WHERE m.user = :user AND m.recordDate = :date")
+    Optional<MorningPage> findByUserAndRecordDate(@Param("user") User user,
+    @Param("date") LocalDate date);
+
+    @Query("SELECT m FROM MorningPage m " +
+    "JOIN FETCH m.user " +
+    "JOIN FETCH m.category " +
+    "WHERE m.user = :user " +
+    "AND m.recordDate BETWEEN :startDate AND :endDate")
+    List<MorningPage> findByUserAndRecordDateBetween(@Param("user") User user,
+    @Param("startDate") LocalDate startDate,
+    @Param("endDate") LocalDate endDate);
+
+    @Query("SELECT m FROM MorningPage m " +
+    "JOIN FETCH m.user " +
+    "JOIN FETCH m.category " +
+    "WHERE m.isPublic = true " +
+    "ORDER BY m.createdAt DESC " +
+    "LIMIT 10")
     List<MorningPage> findTop10ByIsPublicTrueOrderByCreatedAtDesc();
-    
-    // 특정 월의 기록 개수
-    @Query("SELECT COUNT(m) FROM MorningPage m WHERE m.user = :user " +
-    "AND YEAR(m.recordDate) = :year AND MONTH(m.recordDate) = :month")
-    Long countByUserAndYearMonth(@Param("user") User user, @Param("year") int year, @Param("month") int month);
+
+    @Query("SELECT COUNT(m) FROM MorningPage m " +
+    "WHERE m.user = :user " +
+    "AND YEAR(m.recordDate) = :year " +
+    "AND MONTH(m.recordDate) = :month")
+    Long countByUserAndYearMonth(@Param("user") User user,
+    @Param("year") int year,
+    @Param("month") int month);
 }

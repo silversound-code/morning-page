@@ -4,9 +4,11 @@ import com.morning.morningpage.dto.UserRequest;
 import com.morning.morningpage.dto.UserResponse;
 import com.morning.morningpage.entity.User;
 import com.morning.morningpage.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.servlet.http.HttpSession;
@@ -20,7 +22,14 @@ public class UserController {
     
     // 회원가입
     @PostMapping("/register")
-    public ResponseEntity<UserResponse> register(@RequestBody UserRequest request) {
+    public ResponseEntity<?> register(@Valid @RequestBody UserRequest request, 
+        BindingResult bindingResult) {
+        // Validation 에러 체크
+        if (bindingResult.hasErrors()) {
+            String errorMessage = bindingResult.getAllErrors().get(0).getDefaultMessage();
+            return ResponseEntity.badRequest().body(errorMessage);
+        }
+        
         try {
             User user = userService.register(
                     request.getUsername(),
@@ -30,13 +39,21 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(UserResponse.from(user));
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
     
     // 로그인
     @PostMapping("/login")
-    public ResponseEntity<UserResponse> login(@RequestBody UserRequest request, HttpSession session) {
+    public ResponseEntity<?> login(@Valid @RequestBody UserRequest request,
+                                   BindingResult bindingResult,
+                                   HttpSession session) {
+        // Validation 에러 체크
+        if (bindingResult.hasErrors()) {
+            String errorMessage = bindingResult.getAllErrors().get(0).getDefaultMessage();
+            return ResponseEntity.badRequest().body(errorMessage);
+        }
+        
         try {
             User user = userService.login(request.getUsername(), request.getPassword());
             
@@ -45,7 +62,7 @@ public class UserController {
             
             return ResponseEntity.ok(UserResponse.from(user));
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
     }
     
@@ -58,10 +75,11 @@ public class UserController {
     
     // 현재 로그인 사용자 정보
     @GetMapping("/me")
-    public ResponseEntity<UserResponse> getCurrentUser(HttpSession session) {
+    public ResponseEntity<?> getCurrentUser(HttpSession session) {
         Long userId = (Long) session.getAttribute("userId");
         if (userId == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("로그인이 필요합니다.");
         }
         
         User user = userService.getUserById(userId);
