@@ -1,5 +1,5 @@
 // API 기본 설정
-const API_URL = 'http://localhost:8080/api';
+const API_URL = 'http://43.201.10.52:8080/api';
 
 // 전역 변수
 let currentUser = null;
