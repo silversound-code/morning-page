@@ -90,6 +90,7 @@ function showMainScreen() {
     loadMonthRecords();
     loadPublicFeed();
     updateUserInfo();
+    loadSavedMusic();
 }
 
 function showLogin() {

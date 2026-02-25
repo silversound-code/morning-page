@@ -1,5 +1,6 @@
 package com.morning.morningpage.controller;
 
+import com.morning.morningpage.dto.LoginRequest;
 import com.morning.morningpage.dto.UserRequest;
 import com.morning.morningpage.dto.UserResponse;
 import com.morning.morningpage.entity.User;
@@ -45,7 +46,7 @@ public class UserController {
     
     // 로그인
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody UserRequest request,
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request,
                                    BindingResult bindingResult,
                                    HttpSession session) {
         // Validation 에러 체크
@@ -53,7 +54,7 @@ public class UserController {
             String errorMessage = bindingResult.getAllErrors().get(0).getDefaultMessage();
             return ResponseEntity.badRequest().body(errorMessage);
         }
-        
+
         try {
             User user = userService.login(request.getUsername(), request.getPassword());
             
@@ -91,5 +92,27 @@ public class UserController {
     public ResponseEntity<UserResponse> getUser(@PathVariable Long id) {
         User user = userService.getUserById(id);
         return ResponseEntity.ok(UserResponse.from(user));
+    }
+
+    // 내 추천곡 저장
+    @PatchMapping("/me/music")
+    public ResponseEntity<Void> updateMusic(@RequestBody java.util.Map<String, String> body,
+                                            HttpSession session) {
+        Long userId = (Long) session.getAttribute("userId");
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        userService.updateYoutubeUrl(userId, body.get("youtubeUrl"));
+        return ResponseEntity.ok().build();
+    }
+
+    // 모두의 추천곡 조회
+    @GetMapping("/music/public")
+    public ResponseEntity<java.util.List<UserResponse>> getPublicMusic() {
+        java.util.List<UserResponse> list = userService.getUsersWithMusic()
+                .stream()
+                .map(UserResponse::from)
+                .collect(java.util.stream.Collectors.toList());
+        return ResponseEntity.ok(list);
     }
 }

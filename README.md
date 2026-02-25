@@ -166,7 +166,8 @@ spring.datasource.password=your_password
 
 ### 5. 접속
 ```
-http://localhost:8080
+http://43.201.10.52:8080
+
 ```
 
 ---

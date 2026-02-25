@@ -80,6 +80,18 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
     }
     
+    // 추천곡 URL 저장
+    @Transactional
+    public void updateYoutubeUrl(Long userId, String youtubeUrl) {
+        User user = getUserById(userId);
+        user.setYoutubeUrl(youtubeUrl);
+    }
+
+    // 추천곡 등록한 모든 유저 조회
+    public List<User> getUsersWithMusic() {
+        return userRepository.findByYoutubeUrlIsNotNull();
+    }
+
     // 사용자 통계 업데이트
     @Transactional
     public void updateUserStats(Long userId) {

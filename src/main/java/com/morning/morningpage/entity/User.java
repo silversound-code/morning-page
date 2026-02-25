@@ -36,6 +36,9 @@ public class User {
     @Column(nullable = false)
     private Integer totalRecords = 0;   // 총 기록 수
     
+    @Column(length = 500)
+    private String youtubeUrl;
+
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime createdAt;

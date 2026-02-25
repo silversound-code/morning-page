@@ -169,6 +169,7 @@ async function updateRecord(e) {
     
     const id = document.getElementById('editRecordId').value;
     const data = {
+        recordDate: document.getElementById('editRecordDate').value,
         categoryId: parseInt(document.getElementById('editCategoryId').value),
         activity: document.getElementById('editActivity').value,
         duration: parseInt(document.getElementById('editDuration').value) || null,

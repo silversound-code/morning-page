@@ -15,8 +15,9 @@ public class UserResponse {
     private String email;
     private Integer currentStreak;
     private Integer totalRecords;
+    private String youtubeUrl;
     private LocalDateTime createdAt;
-    
+
     public static UserResponse from(User user) {
         return UserResponse.builder()
                 .id(user.getId())
@@ -24,6 +25,7 @@ public class UserResponse {
                 .email(user.getEmail())
                 .currentStreak(user.getCurrentStreak())
                 .totalRecords(user.getTotalRecords())
+                .youtubeUrl(user.getYoutubeUrl())
                 .createdAt(user.getCreatedAt())
                 .build();
     }

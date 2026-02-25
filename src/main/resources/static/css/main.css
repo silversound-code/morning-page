@@ -376,9 +376,27 @@ button:active {
     100% { transform: rotate(360deg); }
 }
 
+/* 음악 아이템 */
+.music-item {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border-color, #eee);
+}
+.music-item:last-child {
+    border-bottom: none;
+}
+.music-author {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary, #666);
+    margin-bottom: 6px;
+}
+
 /* 반응형 */
 @media (max-width: 768px) {
     .main-content {
+        grid-template-columns: 1fr;
+    }
+    .public-section {
         grid-template-columns: 1fr;
     }
 }
