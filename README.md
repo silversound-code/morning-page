@@ -266,7 +266,7 @@ ERROR 1819: Your password does not satisfy the current policy requirements
 
 ---
 
-## 📚 배운 점
+## 복습 항목들
 
 ### 기술
 - Spring Boot 전체 구조 이해
