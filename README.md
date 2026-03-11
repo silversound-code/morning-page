@@ -303,13 +303,13 @@ ERROR 1819: Your password does not satisfy the current policy requirements
 
 ## 🗓️ 개발 일정
 
-- [x] 프로젝트 초기 설정 (2026.02.14)
-- [x] Entity 및 Repository 구현 (2026.02.14)
-- [x] Service 및 Controller 구현 (2026.02.15)
-- [x] 프론트엔드 UI 개발 (2026.02.16-21)
-- [x] 보안 기능 (비밀번호 암호화) (2026.02.21)
-- [x] Validation 및 최적화 (2026.02.21)
-- [x] AWS EC2 배포 (2026.02.23)
+- [x] 프로젝트 초기 설정
+- [x] Entity 및 Repository 구현
+- [x] Service 및 Controller 구현
+- [x] 프론트엔드 UI 개발
+- [x] 보안 기능 (비밀번호 암호화)
+- [x] Validation 및 최적화
+- [x] AWS EC2 배포
 
 ---
 
